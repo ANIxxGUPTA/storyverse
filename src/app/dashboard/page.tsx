@@ -58,7 +58,10 @@ export default function DashboardPage() {
   }, [status, router]);
 
   const fetchDashboardData = async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id) {
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch(`/api/users/${session.user.id}`);
       if (!res.ok) throw new Error("Failed to fetch dashboard data");
