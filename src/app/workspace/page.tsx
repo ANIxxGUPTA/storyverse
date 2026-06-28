@@ -46,6 +46,21 @@ const COLUMN_TITLES: { [key: string]: string } = {
   archived: "Archived"
 };
 
+// Droppable Column Component
+function DroppableColumn({ id, children, items }: { id: string, children: React.ReactNode, items: string[] }) {
+  const { setNodeRef } = useDroppable({ id });
+  return (
+    <div 
+      ref={setNodeRef}
+      className="flex-grow flex flex-col gap-3 p-3 bg-zinc-100/50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl overflow-y-auto min-h-[150px]"
+    >
+      <SortableContext id={id} items={items} strategy={verticalListSortingStrategy}>
+        {children}
+      </SortableContext>
+    </div>
+  );
+}
+
 // Sortable Story Card Component
 function SortableStoryCard({ story }: { story: Story }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: story._id });
