@@ -4,14 +4,14 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Story from "@/models/Story";
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { status } = await req.json();
 
     if (!status || !["ideas", "draft", "editing", "published", "archived"].includes(status)) {
