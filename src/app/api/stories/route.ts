@@ -12,16 +12,54 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const authorId = searchParams.get("authorId");
+    const genre = searchParams.get("genre");
+    const tag = searchParams.get("tag");
+    const search = searchParams.get("search");
+    const sort = searchParams.get("sort") || "recent"; // recent, likes, views
     
-    let query = {};
+    let query: any = {};
+    
     if (authorId) {
-      query = { author: authorId };
+      query.author = authorId;
+    }
+    
+    if (genre && genre !== "All") {
+      query.genre = { $regex: new RegExp(`^${genre}$`, "i") };
+    }
+    
+    if (tag) {
+      query.tags = { $in: [new RegExp(`^${tag}$`, "i")] };
+    }
+    
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
     }
 
-    // Sort by most recent first
-    const stories = await Story.find(query)
+    let sortOption: any = { createdAt: -1 };
+    if (sort === "views") {
+      sortOption = { views: -1 };
+    } else if (sort === "likes") {
+      // In MongoDB, sorting by array length is not directly supported without aggregation, 
+      // but we can sort by views or fallback to createdAt, or we can handle array length sorting in memory.
+      // Since it's a small app, we'll sort in memory or use aggregation if needed. Let's do simple sort fallback first.
+      sortOption = { createdAt: -1 };
+    }
+
+    let stories = await Story.find(query)
       .populate("author", "username image")
-      .sort({ createdAt: -1 });
+      .sort(sortOption);
+
+    // If sorting by likes, do it in-memory
+    if (sort === "likes") {
+      stories = stories.sort((a, b) => {
+        const aLikes = Array.isArray(a.likes) ? a.likes.length : 0;
+        const bLikes = Array.isArray(b.likes) ? b.likes.length : 0;
+        return bLikes - aLikes;
+      });
+    }
 
     return NextResponse.json(stories);
   } catch (error) {
@@ -44,7 +82,7 @@ export async function POST(request: Request) {
     }
 
     await connectDB();
-    const { title, coverImage, description } = await request.json();
+    const { title, coverImage, description, genre, tags } = await request.json();
 
     if (!title || !description) {
       return NextResponse.json(
@@ -53,11 +91,22 @@ export async function POST(request: Request) {
       );
     }
 
+    // Process tags into array of strings if it is sent as string
+    let processedTags: string[] = [];
+    if (Array.isArray(tags)) {
+      processedTags = tags.map(t => t.trim()).filter(Boolean);
+    } else if (typeof tags === "string") {
+      processedTags = tags.split(",").map(t => t.trim()).filter(Boolean);
+    }
+
     const newStory = await Story.create({
       title,
       coverImage: coverImage || "",
       description,
+      genre: genre || "Fiction",
+      tags: processedTags,
       author: session.user.id,
+      likes: [],
     });
 
     return NextResponse.json(newStory, { status: 201 });

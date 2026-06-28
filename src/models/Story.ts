@@ -18,8 +18,23 @@ const StorySchema = new mongoose.Schema(
     },
 
     likes: {
-      type: Number,
-      default: 0,
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      default: [],
+    },
+
+    genre: {
+      type: String,
+      default: "Fiction",
+    },
+
+    tags: {
+      type: [String],
+      default: [],
+    },
+
+    embedding: {
+      type: [Number],
+      default: [],
     },
 
     status: {

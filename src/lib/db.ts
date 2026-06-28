@@ -5,6 +5,8 @@ import "@/models/User";
 import "@/models/Story";
 import "@/models/Chapter";
 import "@/models/Post";
+import "@/models/ReadingProgress";
+import "@/models/Collection";
 
 
 const MONGODB_URI = process.env.MONGODB_URI!;

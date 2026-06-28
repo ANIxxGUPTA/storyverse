@@ -13,20 +13,24 @@ export async function GET(
     await connectDB();
     const { id } = await params;
 
-    // Find user, but exclude password for security
     const user = await User.findById(id).select("-password");
+
+    // Fetch user's stories and posts even if user document is missing
+    const stories = await Story.find({ author: id }).sort({ createdAt: -1 });
+    const posts = await Post.find({ author: id }).populate("author", "username image").sort({ createdAt: -1 });
+
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({
+        user: { _id: id, username: "Anonymous", image: "" },
+        stories,
+        posts,
+        stats: {
+          storiesCount: stories.length,
+          postsCount: posts.length,
+        },
+      });
     }
 
-    // Fetch user's stories
-    const stories = await Story.find({ author: id }).sort({ createdAt: -1 });
-
-    // Fetch user's posts
-    const posts = await Post.find({ author: id }).populate("author", "username image").sort({ createdAt: -1 });
 
     return NextResponse.json({
       user,

@@ -6,11 +6,14 @@ import Post from "@/models/Post";
 import User from "@/models/User";
 import { authOptions } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await connectDB();
+    
+    const { searchParams } = new URL(request.url);
+    const communityGenre = searchParams.get("communityGenre") || "";
 
-    const posts = await Post.find({})
+    const posts = await Post.find({ communityGenre })
       .populate("author", "username image")
       .sort({ createdAt: -1 });
 
@@ -35,7 +38,7 @@ export async function POST(request: Request) {
     }
 
     await connectDB();
-    const { content, image } = await request.json();
+    const { content, image, communityGenre } = await request.json();
 
     if (!content) {
       return NextResponse.json(
@@ -47,6 +50,7 @@ export async function POST(request: Request) {
     const newPost = await Post.create({
       content,
       image: image || "",
+      communityGenre: communityGenre || "",
       author: session.user.id,
       likes: [],
     });
@@ -55,6 +59,13 @@ export async function POST(request: Request) {
       "author",
       "username image"
     );
+
+    // Emit live event
+    if (communityGenre) {
+      import("@/lib/eventEmitter").then(({ liveEmitter }) => {
+        liveEmitter.emit(`chat:${communityGenre.toLowerCase()}`, populatedPost);
+      });
+    }
 
     return NextResponse.json(populatedPost, { status: 201 });
   } catch (error) {

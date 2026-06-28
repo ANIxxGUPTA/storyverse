@@ -44,21 +44,21 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-transparent px-6 py-12">
       {/* Decorative background glow */}
-      <div className="absolute top-1/4 left-1/4 -z-10 h-72 w-72 rounded-full bg-purple-600/10 blur-[128px]" />
-      <div className="absolute bottom-1/4 right-1/4 -z-10 h-72 w-72 rounded-full bg-orange-500/10 blur-[128px]" />
+      <div className="absolute top-1/4 left-1/4 -z-10 h-72 w-72 rounded-full bg-indigo-600/10 blur-[128px]" />
+      <div className="absolute bottom-1/4 right-1/4 -z-10 h-72 w-72 rounded-full bg-blue-500/10 blur-[128px]" />
 
-      <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900/60 p-8 shadow-xl backdrop-blur-md">
+      <div className="w-full max-w-md rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100/60 dark:bg-zinc-900/60 p-8 shadow-xl backdrop-blur-md">
         <div className="flex flex-col items-center text-center">
-          <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight text-white hover:opacity-95">
-            <BookOpen className="h-6 w-6 text-orange-500" />
+          <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white hover:opacity-95">
+            <BookOpen className="h-6 w-6 text-zinc-900 dark:text-white" />
             <span>StoryVerse</span>
           </Link>
-          <h2 className="mt-6 text-2xl font-semibold tracking-tight text-zinc-100">
+          <h2 className="mt-6 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
             Create an account
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
             Join the community of readers and writers.
           </p>
         </div>
@@ -72,14 +72,14 @@ export default function RegisterPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-xs font-medium text-zinc-300">
+              <label htmlFor="username" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Username
               </label>
               <input
                 id="username"
                 type="text"
                 required
-                className="mt-1 block w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 shadow-sm transition focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-500 shadow-sm transition focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-white"
                 placeholder="johndoe"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -87,14 +87,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-zinc-300">
+              <label htmlFor="email" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Email address
               </label>
               <input
                 id="email"
                 type="email"
                 required
-                className="mt-1 block w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 shadow-sm transition focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-500 shadow-sm transition focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-white"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -102,14 +102,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-medium text-zinc-300">
+              <label htmlFor="password" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Password
               </label>
               <input
                 id="password"
                 type="password"
                 required
-                className="mt-1 block w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 shadow-sm transition focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                className="mt-1 block w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-white placeholder-zinc-500 shadow-sm transition focus:border-zinc-900 dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-white"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -120,15 +120,15 @@ export default function RegisterPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full h-10 bg-gradient-to-r from-orange-500 to-purple-600 font-medium text-white hover:opacity-90 transition duration-200"
+            className="w-full h-10 bg-blue-600 hover:bg-blue-700 font-medium text-white hover:opacity-90 transition duration-200"
           >
             {loading ? "Creating account..." : "Create Account"}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-zinc-400">
+        <p className="mt-6 text-center text-xs text-zinc-600 dark:text-zinc-400">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-orange-400 hover:text-orange-300 hover:underline">
+          <Link href="/login" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline">
             Login here
           </Link>
         </p>

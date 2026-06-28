@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { connectDB } from "@/lib/db";
 import Story from "@/models/Story";
 import Chapter from "@/models/Chapter";
+import ChapterRevision from "@/models/ChapterRevision";
 import { authOptions } from "@/lib/auth";
 
 export async function POST(
@@ -38,7 +39,7 @@ export async function POST(
       );
     }
 
-    const { title, content } = await request.json();
+    const { title, content, status = "draft", wordCount = 0, publishAt } = await request.json();
     if (!title || !content) {
       return NextResponse.json(
         { error: "Chapter title and content are required" },
@@ -55,6 +56,16 @@ export async function POST(
       title,
       content,
       chapterNumber,
+      status,
+      wordCount,
+      publishAt: publishAt || null,
+    });
+
+    // Create the initial version history
+    await ChapterRevision.create({
+      chapterId: newChapter._id,
+      content: content,
+      versionNumber: 1,
     });
 
     return NextResponse.json(newChapter, { status: 201 });

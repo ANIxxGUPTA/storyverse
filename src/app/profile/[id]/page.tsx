@@ -81,10 +81,10 @@ export default function GuestProfilePage({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-50">
+      <div className="flex min-h-screen flex-col bg-transparent">
         <Navbar />
         <div className="flex flex-grow items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-zinc-900 dark:text-white" />
         </div>
       </div>
     );
@@ -92,13 +92,13 @@ export default function GuestProfilePage({
 
   if (error || !profile) {
     return (
-      <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-50">
+      <div className="flex min-h-screen flex-col bg-transparent">
         <Navbar />
         <div className="flex flex-grow flex-col items-center justify-center text-center">
-          <h2 className="text-xl font-bold text-zinc-300">Profile not found</h2>
+          <h2 className="text-xl font-bold text-zinc-700 dark:text-zinc-300">Profile not found</h2>
           <p className="mt-2 text-sm text-zinc-500">{error || "The user you are trying to view does not exist."}</p>
           <Link href="/" className="mt-6">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white">Back to Home</Button>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white">Back to Home</Button>
           </Link>
         </div>
       </div>
@@ -118,9 +118,9 @@ export default function GuestProfilePage({
     }
 
     return (
-      <div className="flex h-full w-full flex-col justify-between bg-gradient-to-br from-orange-500 to-purple-600 p-4 transition duration-300 group-hover:scale-105">
-        <BookOpen className="h-4 w-4 text-white/80" />
-        <span className="font-serif text-sm font-bold leading-tight text-white line-clamp-2 drop-shadow">
+      <div className="flex h-full w-full flex-col justify-between bg-zinc-200 dark:bg-zinc-800 p-4 transition duration-300 group-hover:scale-105">
+        <BookOpen className="h-4 w-4 text-zinc-900 dark:text-white/80" />
+        <span className="font-serif text-sm font-bold leading-tight text-zinc-900 dark:text-white line-clamp-2 drop-shadow">
           {title}
         </span>
         <div className="h-1 w-1/4 rounded bg-white/40" />
@@ -129,19 +129,19 @@ export default function GuestProfilePage({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-50">
+    <div className="flex min-h-screen flex-col bg-transparent">
       <Navbar />
 
       <main className="mx-auto w-full max-w-5xl flex-grow px-6 py-8">
-        <Link href="/" className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition mb-6">
+        <Link href="/" className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200 transition mb-6">
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to Stories
         </Link>
 
         {/* Profile Card Header */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8 backdrop-blur-sm shadow-xl">
+        <div className="rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100/40 dark:bg-zinc-900/40 p-6 sm:p-8 backdrop-blur-sm shadow-xl">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-            <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-orange-500 to-purple-600 font-extrabold text-white text-3xl shadow-lg">
+            <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 font-extrabold text-zinc-900 dark:text-zinc-100 text-3xl shadow-lg border border-zinc-200 dark:border-zinc-800">
               {profile.image ? (
                 <img src={profile.image} alt={profile.username} className="h-full w-full rounded-full object-cover" />
               ) : (
@@ -151,13 +151,13 @@ export default function GuestProfilePage({
 
             <div className="flex-grow space-y-3">
               <div>
-                <h1 className="text-2xl font-extrabold text-zinc-100">{profile.username}</h1>
+                <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-100">{profile.username}</h1>
 
               </div>
 
               <div className="pt-2 border-t border-zinc-850">
                 <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Bio</h3>
-                <p className="mt-1.5 text-sm text-zinc-300 leading-relaxed max-w-2xl">
+                <p className="mt-1.5 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed max-w-2xl">
                   {profile.bio || `No bio published yet. Just a creative soul on StoryVerse.`}
                 </p>
               </div>
@@ -166,13 +166,13 @@ export default function GuestProfilePage({
         </div>
 
         {/* Tab Selection */}
-        <div className="mt-10 border-b border-zinc-900 flex gap-6">
+        <div className="mt-10 border-b border-zinc-200 dark:border-zinc-900 flex gap-6">
           <button
             onClick={() => setActiveTab("stories")}
             className={`pb-4 text-sm font-semibold transition border-b-2 ${
               activeTab === "stories"
-                ? "border-orange-500 text-orange-500"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                ? "border-blue-500 text-zinc-900 dark:text-white"
+                : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-300"
             }`}
           >
             Stories Published ({stories.length})
@@ -181,8 +181,8 @@ export default function GuestProfilePage({
             onClick={() => setActiveTab("posts")}
             className={`pb-4 text-sm font-semibold transition border-b-2 ${
               activeTab === "posts"
-                ? "border-purple-500 text-purple-500"
-                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                ? "border-indigo-500 text-zinc-900 dark:text-white"
+                : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-300"
             }`}
           >
             Posts Published ({posts.length})
@@ -194,8 +194,8 @@ export default function GuestProfilePage({
           {activeTab === "stories" ? (
             stories.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
-                <BookOpen className="h-10 w-10 text-zinc-800" />
-                <h3 className="mt-4 font-semibold text-zinc-400">No stories published yet</h3>
+                <BookOpen className="h-10 w-10 text-zinc-500 dark:text-zinc-400" />
+                <h3 className="mt-4 font-semibold text-zinc-600 dark:text-zinc-400">No stories published yet</h3>
                 <p className="mt-1 text-xs text-zinc-500">
                   {profile.username} has not uploaded any stories to StoryVerse yet.
                 </p>
@@ -206,13 +206,13 @@ export default function GuestProfilePage({
                   <Link
                     key={story._id}
                     href={`/stories/${story._id}`}
-                    className="group flex flex-col overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/10 transition hover:border-zinc-850 hover:bg-zinc-900/30"
+                    className="group flex flex-col overflow-hidden rounded-xl border border-zinc-300 dark:border-zinc-800/80 bg-zinc-100/10 dark:bg-zinc-900/10 transition hover:border-zinc-400 dark:hover:border-zinc-700 hover:bg-zinc-100/30 dark:bg-zinc-900/30"
                   >
-                    <div className="aspect-video w-full overflow-hidden bg-zinc-950">
+                    <div className="aspect-video w-full overflow-hidden bg-white dark:bg-zinc-950">
                       <StoryCardCover coverImage={story.coverImage} title={story.title} />
                     </div>
                     <div className="p-4">
-                      <h4 className="font-semibold text-zinc-200 group-hover:text-orange-400 transition line-clamp-1">
+                      <h4 className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-white transition line-clamp-1">
                         {story.title}
                       </h4>
                       <p className="mt-2 text-xs text-zinc-500 line-clamp-2">
@@ -226,8 +226,8 @@ export default function GuestProfilePage({
             )
           ) : posts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <UserIcon className="h-10 w-10 text-zinc-800" />
-              <h3 className="mt-4 font-semibold text-zinc-400">No posts published yet</h3>
+              <UserIcon className="h-10 w-10 text-zinc-500 dark:text-zinc-400" />
+              <h3 className="mt-4 font-semibold text-zinc-600 dark:text-zinc-400">No posts published yet</h3>
               <p className="mt-1 text-xs text-zinc-500">
                 {profile.username} has not posted anything on the social feed yet.
               </p>
@@ -237,10 +237,10 @@ export default function GuestProfilePage({
               {posts.map((post) => (
                 <div
                   key={post._id}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900/10 p-5 hover:border-zinc-850 transition"
+                  className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100/10 dark:bg-zinc-900/10 p-5 hover:border-zinc-400 dark:hover:border-zinc-700 transition"
                 >
 
-                  <p className="mt-2.5 text-sm text-zinc-300 leading-relaxed line-clamp-4 whitespace-pre-wrap">
+                  <p className="mt-2.5 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed line-clamp-4 whitespace-pre-wrap">
                     {post.content}
                   </p>
 

@@ -1,15 +1,23 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { BookOpen, LogOut, User as UserIcon, LayoutDashboard, Rss, Home } from "lucide-react";
+import { useTheme } from "next-themes";
+import { BookOpen, LogOut, LayoutDashboard, Rss, Home, Search, Settings, FolderHeart, BookMarked, User as UserIcon, Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = () => {
     signOut({ callbackUrl: "/" });
@@ -18,19 +26,19 @@ export function Navbar() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-zinc-900 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2 font-bold tracking-tight text-white hover:opacity-90">
-          <BookOpen className="h-5 w-5 text-orange-500" />
-          <span className="text-lg">StoryVerse</span>
+        <Link href="/" className="flex items-center gap-2 font-bold tracking-tight text-zinc-900 dark:text-white hover:opacity-90 transition">
+          <BookOpen className="h-5 w-5 text-zinc-900 dark:text-white" />
+          <span className="text-lg font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">StoryVerse</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="flex items-center gap-6 text-sm">
+        <nav className="flex items-center gap-5 text-sm">
           <Link
             href="/"
-            className={`flex items-center gap-1.5 transition hover:text-zinc-100 ${
-              isActive("/") ? "font-semibold text-zinc-100" : "text-zinc-400"
+            className={`flex items-center gap-1.5 transition ${
+              isActive("/") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
             }`}
           >
             <Home className="h-4 w-4" />
@@ -38,44 +46,77 @@ export function Navbar() {
           </Link>
           
           <Link
-            href="/feed"
-            className={`flex items-center gap-1.5 transition hover:text-zinc-100 ${
-              isActive("/feed") ? "font-semibold text-zinc-100" : "text-zinc-400"
+            href="/search"
+            className={`flex items-center gap-1.5 transition ${
+              isActive("/search") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
             }`}
           >
-            <Rss className="h-4 w-4" />
-            <span>Feed</span>
+            <Search className="h-4 w-4" />
+            <span>Search</span>
           </Link>
 
           {status === "authenticated" && (
             <>
               <Link
-                href="/dashboard"
-                className={`flex items-center gap-1.5 transition hover:text-zinc-100 ${
-                  isActive("/dashboard") ? "font-semibold text-zinc-100" : "text-zinc-400"
+                href="/library"
+                className={`flex items-center gap-1.5 transition ${
+                  isActive("/library") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                }`}
+              >
+                <BookMarked className="h-4 w-4" />
+                <span>Library</span>
+              </Link>
+              <Link
+                href="/workspace"
+                className={`flex items-center gap-1.5 transition ${
+                  isActive("/workspace") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
                 }`}
               >
                 <LayoutDashboard className="h-4 w-4" />
-                <span>Dashboard</span>
+                <span>Workspace</span>
+              </Link>
+              <Link
+                href="/dashboard"
+                className={`flex items-center gap-1.5 transition ${
+                  isActive("/dashboard") || pathname.startsWith("/profile") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                }`}
+              >
+                <UserIcon className="h-4 w-4" />
+                <span>Profile</span>
               </Link>
             </>
           )}
         </nav>
 
-        {/* Auth Actions */}
-        <div className="flex items-center gap-3">
+        {/* Action Controls */}
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="flex items-center justify-center p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition min-w-[34px] min-h-[34px]"
+          >
+            {mounted ? (theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />) : <div className="h-4 w-4" />}
+          </button>
+
           {status === "loading" ? (
-            <span className="text-xs text-zinc-500">Loading...</span>
+            <span className="text-xs text-zinc-550">Loading...</span>
           ) : status === "authenticated" ? (
             <div className="flex items-center gap-3">
-              <span className="hidden text-xs text-zinc-400 sm:inline-block">
-                Hi, <strong className="text-zinc-200">{session.user?.name}</strong>
+              <span className="hidden text-xs text-zinc-600 dark:text-zinc-400 sm:inline-block">
+                Hi, <strong className="text-zinc-800 dark:text-zinc-200">{session.user?.name}</strong>
               </span>
+
+              {/* Settings link */}
+              <Link href="/settings" title="Settings">
+                <button className="flex items-center justify-center p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition">
+                  <Settings className="h-4 w-4" />
+                </button>
+              </Link>
+
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 border-zinc-800 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+                className="flex items-center gap-1.5 border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Logout</span>
@@ -84,12 +125,12 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/login">
-                <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white">
+                <Button variant="ghost" size="sm" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white">
                   Login
                 </Button>
               </Link>
               <Link href="/register">
-                <Button size="sm" className="bg-gradient-to-r from-orange-500 to-purple-600 text-white hover:opacity-90">
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white hover:opacity-90">
                   Register
                 </Button>
               </Link>
