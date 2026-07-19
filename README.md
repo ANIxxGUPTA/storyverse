@@ -1,10 +1,26 @@
 # StoryVerse 📚✍️
 
-> [!WARNING]
-> **Architecture Migration in Progress:** StoryVerse is currently being restructured into a monorepo.
-> - `legacy-nextjs/` contains the original full-stack Next.js application.
-> - `client/` and `server/` are being scaffolded for the new architecture.
-> Please refer to `legacy-nextjs/` for the current working app and [docs/MIGRATION.md](docs/MIGRATION.md) for architecture details.
+# StoryVerse
+
+StoryVerse is a full-stack platform for writers and readers, featuring a highly interactive Creator Hub, an immersive Story Reader, and AI-powered semantic search.
+
+## Final Architecture
+
+This project was successfully migrated from a legacy Next.js codebase to a modern, decoupled React SPA + Express REST API architecture.
+
+### Tech Stack
+- **Frontend:** React 19, Vite, TypeScript, Tailwind CSS, shadcn/ui, Radix UI, React Router v6, `@dnd-kit/core` (drag-and-drop)
+- **Backend:** Node.js, Express, TypeScript, Passport.js (Cookie-based Sessions)
+- **Database:** MongoDB (Mongoose)
+- **AI Integration:** `@xenova/transformers` (local embeddings), Google Gemini API (generative content)
+
+## Deployment
+
+- **Frontend (Client):** Deployed on Vercel (`client/` root).
+- **Backend (Server):** Deployed on Render (`server/` root).
+- **Database:** Hosted on MongoDB Atlas.
+
+> **Note:** The legacy Next.js codebase has been safely archived via the `legacy-nextjs-final` Git tag.
 
 Welcome to **StoryVerse**, a modern full-stack web application designed for self-publishing stories, writing chapters, reading user-submitted tales, and sharing text updates on a community feed. 
 
