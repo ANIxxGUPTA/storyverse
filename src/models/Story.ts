@@ -12,6 +12,14 @@ const StorySchema = new mongoose.Schema(
       ref: "User",
     },
 
+    collaborators: {
+      type: [{
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        role: { type: String, enum: ["Owner", "Editor", "Reviewer", "Beta Reader", "Artist", "Translator"], default: "Editor" }
+      }],
+      default: [],
+    },
+
     views: {
       type: Number,
       default: 0,

@@ -9,7 +9,7 @@ import { ArrowLeft, BookOpen, FileText, Loader2, Save, CloudOff, Sparkles } from
 import { Navbar } from "@/components/layout/navbar";
 import { AiAssistantSidebar } from "@/components/story/ai-assistant-sidebar";
 import { Button } from "@/components/ui/button";
-import { MarkdownEditor } from "@/components/ui/markdown-editor";
+import { CollaborativeEditor } from "@/components/ui/collaborative-editor";
 import { useAutosave } from "@/hooks/useAutosave";
 
 interface Story {
@@ -220,10 +220,10 @@ export default function EditChapterPage({
                     <span>{charCount} chars</span>
                   </div>
                 </div>
-                <MarkdownEditor 
+                <CollaborativeEditor 
                   value={content} 
                   onChange={setContent} 
-                  placeholder="Write your story's next epic chapter using Markdown..."
+                  chapterId={chapterId}
                   minHeight="500px"
                 />
               </div>
