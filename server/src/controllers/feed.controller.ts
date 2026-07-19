@@ -3,16 +3,25 @@ import Post from '../models/Post';
 
 export const getFeed = async (req: Request, res: Response) => {
   try {
-    const { communityGenre } = req.query;
+    const { communityGenre, page, limit } = req.query;
+    
+    const pageNum = parseInt(page as string) || 1;
+    const limitNum = parseInt(limit as string) || 0;
     
     let query: any = {};
     if (communityGenre && typeof communityGenre === 'string') {
       query.communityGenre = communityGenre;
     }
 
-    const posts = await Post.find(query)
+    let postsQuery = Post.find(query)
       .populate("author", "username image")
       .sort({ createdAt: -1 });
+
+    if (limitNum > 0) {
+      postsQuery = postsQuery.skip((pageNum - 1) * limitNum).limit(limitNum);
+    }
+
+    const posts = await postsQuery;
 
     return res.json(posts);
   } catch (error) {

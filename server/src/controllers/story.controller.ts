@@ -6,7 +6,10 @@ import ChapterRevision from '../models/ChapterRevision';
 
 export const getStories = async (req: Request, res: Response) => {
   try {
-    const { authorId, genre, tag, search, sort = 'recent' } = req.query;
+    const { authorId, genre, tag, search, sort = 'recent', page, limit } = req.query;
+    
+    const pageNum = parseInt(page as string) || 1;
+    const limitNum = parseInt(limit as string) || 0; // default 0 means no limit (matching legacy behavior)
     
     let query: any = {};
     
@@ -36,9 +39,15 @@ export const getStories = async (req: Request, res: Response) => {
       sortOption = { createdAt: -1 }; // fallback
     }
 
-    let stories = await Story.find(query)
+    let storiesQuery = Story.find(query)
       .populate("author", "username image")
       .sort(sortOption);
+
+    if (limitNum > 0) {
+      storiesQuery = storiesQuery.skip((pageNum - 1) * limitNum).limit(limitNum);
+    }
+
+    let stories = await storiesQuery;
 
     if (sort === "likes") {
       stories = stories.sort((a, b) => {
