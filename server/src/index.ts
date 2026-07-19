@@ -51,9 +51,13 @@ app.use('/api/search', searchRoutes);
 
 const startServer = async () => {
   await connectDB();
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+  if (process.env.NODE_ENV !== 'production' || process.env.VERCEL !== '1') {
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  }
 };
 
 startServer();
+
+export default app;

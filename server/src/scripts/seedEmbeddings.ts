@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { embed, initEmbeddingsModel } from '../services/embeddings.service';
+import { embed } from '../services/embeddings.service';
 import Story from '../models/Story';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -17,9 +17,7 @@ async function generateEmbeddings() {
     await mongoose.connect(uri);
     console.log("Connected to MongoDB.");
 
-    console.log("Loading embedding model (this may take a moment on first run)...");
-    await initEmbeddingsModel();
-    console.log("Model loaded successfully!");
+
 
     const stories = await Story.find({});
     console.log(`Found ${stories.length} stories. Generating embeddings...`);

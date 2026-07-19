@@ -1,34 +1,4 @@
-import { pipeline } from "@xenova/transformers";
-
-let extractor: any = null;
-let isLoading = false;
-let loadPromise: Promise<void> | null = null;
-
-/**
- * Initializes the Transformers.js pipeline (only once).
- */
-export async function initEmbeddingsModel(): Promise<void> {
-  if (extractor) return;
-  if (loadPromise) return loadPromise;
-
-  isLoading = true;
-  loadPromise = (async () => {
-    try {
-      console.log("Loading Xenova embedding model...");
-      extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
-        quantized: true,
-      });
-      console.log("Embedding model loaded successfully.");
-    } catch (error) {
-      console.error("Failed to load embedding model:", error);
-      throw error;
-    } finally {
-      isLoading = false;
-    }
-  })();
-
-  return loadPromise;
-}
+import { getGeminiClient } from './gemini.service';
 
 /**
  * Generates an embedding for the given text.
@@ -36,16 +6,17 @@ export async function initEmbeddingsModel(): Promise<void> {
  * @returns The embedding vector as a number array.
  */
 export async function embed(text: string): Promise<number[]> {
-  if (!extractor) {
-    await initEmbeddingsModel();
+  const client = getGeminiClient();
+  try {
+    const response = await client.models.embedContent({
+      model: 'text-embedding-004',
+      contents: text,
+    });
+    return response.embeddings?.[0]?.values || [];
+  } catch (error) {
+    console.error('Error generating embedding with Gemini:', error);
+    throw error;
   }
-  
-  const output = await extractor(text, {
-    pooling: 'mean',
-    normalize: true,
-  });
-  
-  return Array.from(output.data) as number[];
 }
 
 /**
