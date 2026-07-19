@@ -13,9 +13,9 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
+import healthRoute from './routes/health';
+
+app.use('/health', healthRoute);
 
 const startServer = async () => {
   await connectDB();
