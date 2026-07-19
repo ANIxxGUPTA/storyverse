@@ -9,6 +9,9 @@ import { connectDB } from './config/db';
 
 import healthRoute from './routes/health';
 import authRoutes from './routes/auth.routes';
+import storyRoutes from './routes/story.routes';
+import feedRoutes from './routes/feed.routes';
+import userRoutes from './routes/user.routes';
 
 dotenv.config();
 
@@ -40,6 +43,9 @@ app.use(passport.session());
 
 app.use('/health', healthRoute);
 app.use('/api/auth', authRoutes);
+app.use('/api/stories', storyRoutes);
+app.use('/api/feed', feedRoutes);
+app.use('/api/users', userRoutes);
 
 const startServer = async () => {
   await connectDB();

@@ -55,6 +55,11 @@ const StorySchema = new mongoose.Schema(
   }
 );
 
+StorySchema.index({ createdAt: -1 });
+StorySchema.index({ genre: 1 });
+StorySchema.index({ tags: 1 });
+StorySchema.index({ author: 1 });
+
 export default
   mongoose.models.Story ||
   mongoose.model("Story", StorySchema);
