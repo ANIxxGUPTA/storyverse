@@ -47,6 +47,10 @@ export const updateMe = async (req: Request, res: Response) => {
     const { bio, image } = req.body;
     const authUser = req.user as any;
 
+    if (bio && bio.length > 500) {
+      return res.status(400).json({ error: "Bio cannot exceed 500 characters" });
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       authUser._id,
       { bio: bio || "", image: image || "" },

@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.routes';
 import storyRoutes from './routes/story.routes';
 import feedRoutes from './routes/feed.routes';
 import userRoutes from './routes/user.routes';
+import searchRoutes from './routes/search.routes';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/feed', feedRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/search', searchRoutes);
 
 const startServer = async () => {
   await connectDB();

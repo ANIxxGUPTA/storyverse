@@ -41,6 +41,7 @@ export const getStories = async (req: Request, res: Response) => {
 
     let storiesQuery = Story.find(query)
       .populate("author", "username image")
+      .select('-embedding')
       .sort(sortOption);
 
     if (limitNum > 0) {
@@ -100,8 +101,11 @@ export const createStory = async (req: Request, res: Response) => {
     const { title, coverImage, description, genre, tags } = req.body;
     const user = req.user as any;
 
-    if (!title || !description) {
-      return res.status(400).json({ error: "Title and description are required" });
+    if (!title || typeof title !== 'string' || title.trim().length === 0 || title.length > 100) {
+      return res.status(400).json({ error: "Title must be between 1 and 100 characters" });
+    }
+    if (!description || typeof description !== 'string' || description.trim().length === 0 || description.length > 5000) {
+      return res.status(400).json({ error: "Description must be between 1 and 5000 characters" });
     }
 
     let processedTags: string[] = [];
@@ -157,8 +161,11 @@ export const createChapter = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { title, content, status = "draft", wordCount = 0, publishAt } = req.body;
 
-    if (!title || !content) {
-      return res.status(400).json({ error: "Chapter title and content are required" });
+    if (!title || typeof title !== 'string' || title.trim().length === 0 || title.length > 100) {
+      return res.status(400).json({ error: "Chapter title must be between 1 and 100 characters" });
+    }
+    if (!content || typeof content !== 'string' || content.trim().length === 0) {
+      return res.status(400).json({ error: "Chapter content is required" });
     }
 
     const chapterCount = await Chapter.countDocuments({ storyId: id });

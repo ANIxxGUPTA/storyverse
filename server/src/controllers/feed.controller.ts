@@ -32,11 +32,14 @@ export const getFeed = async (req: Request, res: Response) => {
 
 export const createPost = async (req: Request, res: Response) => {
   try {
-    const { content, image, communityGenre } = req.body;
-    const user = req.user as any;
+    const { content, communityGenre } = req.body;
+    const authUser = req.user as any;
 
-    if (!content) {
-      return res.status(400).json({ error: "Post content is required" });
+    if (!content || typeof content !== 'string') {
+      return res.status(400).json({ error: "Content is required and must be text" });
+    }
+    if (content.trim().length === 0 || content.length > 1000) {
+      return res.status(400).json({ error: "Content must be between 1 and 1000 characters" });
     }
 
     const newPost = await Post.create({
