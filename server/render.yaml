@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: storyverse-server
+    env: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: MONGODB_URI
+        sync: false # Set in Render Dashboard
+      - key: SESSION_SECRET
+        sync: false # Set in Render Dashboard
+      - key: GEMINI_API_KEY
+        sync: false # Set in Render Dashboard
+      - key: FRONTEND_URL
+        sync: false # Set in Render Dashboard to your Vercel URL
