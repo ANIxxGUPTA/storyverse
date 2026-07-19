@@ -1,10 +1,10 @@
 # StoryVerse 📚✍️
 
 > [!WARNING]
-> **Migration in Progress:** StoryVerse is currently being restructured into a monorepo.
+> **Architecture Migration in Progress:** StoryVerse is currently being restructured into a monorepo.
 > - `legacy-nextjs/` contains the original full-stack Next.js application.
 > - `client/` and `server/` are being scaffolded for the new architecture.
-> Please refer to `legacy-nextjs/` for the current working app.
+> Please refer to `legacy-nextjs/` for the current working app and [docs/MIGRATION.md](docs/MIGRATION.md) for architecture details.
 
 Welcome to **StoryVerse**, a modern full-stack web application designed for self-publishing stories, writing chapters, reading user-submitted tales, and sharing text updates on a community feed. 
 
