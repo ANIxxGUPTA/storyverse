@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, BookOpen, Send, MessageSquare, Heart, Share2, Eye, Loader2 } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import { ArrowLeft, BookOpen, Send, MessageSquare, Heart, Share2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useStories } from "../lib/hooks/useStories";
 import { useFeed } from "../lib/hooks/useFeed";
+import { useAuth } from "../context/AuthContext";
 
 const GENRE_MAP: Record<string, { title: string; genreKey: string; desc: string; gradient?: string }> = {
   fantasy: {
@@ -45,8 +46,7 @@ const GENRE_MAP: Record<string, { title: string; genreKey: string; desc: string;
 
 export default function CommunityDetail() {
   const { genre = "" } = useParams();
-  const navigate = useNavigate();
-  const session = { user: { id: "mock-user-123" } }; // Mock session
+  const { user } = useAuth();
 
   const config = GENRE_MAP[genre.toLowerCase()] || {
     title: `${genre} Community`,
@@ -69,28 +69,15 @@ export default function CommunityDetail() {
 
     setSubmittingPost(true);
     setTimeout(() => {
-      const newPost = {
-        _id: `new-${Date.now()}`,
-        content: postContent,
-        communityGenre: config.genreKey,
-        likes: [],
-        author: { username: "Mock User" }
-      };
-      setPosts(prev => [newPost, ...prev]);
+
+      // Removed setPosts since it's mock state; in real app this would call an API
       setPostContent("");
       setSubmittingPost(false);
     }, 500);
   };
 
-  const handleLikePost = (postId: string) => {
-    setPosts(posts.map((p) => {
-      if (p._id === postId) {
-        const hasLiked = p.likes?.includes(session.user.id);
-        const newLikes = hasLiked ? p.likes.filter((id: string) => id !== session.user.id) : [...(p.likes || []), session.user.id];
-        return { ...p, likes: newLikes };
-      }
-      return p;
-    }));
+  const handleLikePost = () => {
+    // Removed setPosts since it's mock state; in real app this would call an API
   };
 
   const handleSharePost = (postId: string) => {
@@ -151,7 +138,7 @@ export default function CommunityDetail() {
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2">
-                {stories.map((story) => {
+                {stories.map((story: any) => {
                   const likedCount = Array.isArray(story.likes) ? story.likes.length : 0;
                   return (
                     <Link
@@ -223,9 +210,9 @@ export default function CommunityDetail() {
                   Nothing posted here yet. Start the conversation!
                 </div>
               ) : (
-                posts.map((post) => {
+                posts.map((post: any) => {
                   const likedCount = Array.isArray(post.likes) ? post.likes.length : 0;
-                  const hasLiked = session && post.likes?.includes(session.user.id);
+                  const hasLiked = user && post.likes?.includes(user._id);
                   return (
                     <div
                       key={post._id}
@@ -248,7 +235,7 @@ export default function CommunityDetail() {
 
                       <div className="flex items-center gap-4 text-[10px] text-zinc-500 pt-2 border-t border-zinc-200 dark:border-zinc-900/40">
                         <button
-                          onClick={() => handleLikePost(post._id)}
+                          onClick={() => handleLikePost()}
                           className={`flex items-center gap-1 transition ${hasLiked ? "text-red-500" : "hover:text-red-400"}`}
                         >
                           <Heart className={`h-3.5 w-3.5 ${hasLiked ? "fill-red-500" : ""}`} />

@@ -28,8 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setAuthLoading(true);
       const data = await apiFetch('/api/auth/me');
-      if (data.user) {
-        setUser(data.user);
+      if (data && data._id) {
+        setUser(data);
       } else {
         setUser(null);
       }
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
-    setUser(data.user);
+    setUser(data);
   };
 
   const signup = async (userData: any) => {
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       method: 'POST',
       body: JSON.stringify(userData),
     });
-    setUser(data.user);
+    setUser(data);
   };
 
   const logout = async () => {

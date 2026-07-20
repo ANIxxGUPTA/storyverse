@@ -1,31 +1,12 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, PenTool, Book, Heart, Eye, FolderHeart } from "lucide-react";
 import { useStories } from "../lib/hooks/useStories";
 
-interface Author {
-  _id: string;
-  username: string;
-  image?: string;
-}
 
-interface IStory {
-  _id: string;
-  title: string;
-  description: string;
-  coverImage?: string;
-  genre?: string;
-  tags?: string[];
-  likes?: string[];
-  views?: number;
-  createdAt: string;
-  author: Author;
-}
 
-export default function Home() {
-  const { stories, loading } = useStories({ limit: 9 });
 
-  const StoryCover = ({ coverImage, title, index }: { coverImage?: string; title: string; index: number }) => {
+
+const StoryCover = ({ coverImage, title, index }: { coverImage?: string; title: string; index: number }) => {
     if (coverImage && coverImage.trim() !== "") {
       return (
         <img
@@ -51,19 +32,10 @@ export default function Home() {
         <Book className="h-16 w-16 text-white/20 drop-shadow-sm" />
       </div>
     );
-    "from-rose-400 to-red-600",
-  ];
-  const gradient = gradients[index % gradients.length];
-
-  return (
-    <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${gradient} p-4 transition duration-300 group-hover:scale-105`}>
-      <Book className="h-16 w-16 text-white/20 drop-shadow-sm" />
-    </div>
-  );
-};
+  };
 
 export default function Home() {
-  const { stories, loading } = useStories({ limit: 9 });
+  const { stories } = useStories({ limit: 9 });
 
   return (
     <div className="flex min-h-screen flex-col bg-transparent">
@@ -145,7 +117,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {stories.map((story, idx) => {
+              {stories.map((story: any, idx: number) => {
                 const likedCount = Array.isArray(story.likes) ? story.likes.length : 0;
                 return (
                   <Link

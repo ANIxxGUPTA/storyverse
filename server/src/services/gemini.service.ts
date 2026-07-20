@@ -11,6 +11,11 @@ if (isValidKey) {
   ai = new GoogleGenAI({ apiKey });
 }
 
+export const getGeminiClient = () => {
+  if (!ai) throw new Error("Gemini API not configured properly.");
+  return ai;
+};
+
 export const geminiService = {
   /**
    * Generates a story outline based on a prompt.

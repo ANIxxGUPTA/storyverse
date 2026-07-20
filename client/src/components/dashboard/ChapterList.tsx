@@ -15,7 +15,7 @@ import {
   sortableKeyboardCoordinates
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Loader2, Plus, Edit2, Check, X } from "lucide-react";
+import { GripVertical, Loader2, Plus, Edit2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "../../lib/api";
 

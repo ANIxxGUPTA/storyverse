@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { BookOpen, Book, ArrowLeft, Heart, Eye, FolderHeart, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFetch } from "../lib/hooks/useFetch";
+import { useAuth } from "../context/AuthContext";
 
 export default function StoryDetail() {
   const { id = "" } = useParams();
-  const session = { user: { id: "mock-user-123", name: "Mock User" } };
+  const { user } = useAuth();
 
-  const { data, loading, error } = useFetch<any>(`/api/stories/${id}`);
+  const { data, loading } = useFetch<any>(`/api/stories/${id}`);
   const story = data?.story || null;
   const chapters = data?.chapters || [];
 
@@ -33,7 +33,7 @@ export default function StoryDetail() {
   }
 
   const likedCount = Array.isArray(story.likes) ? story.likes.length : 0;
-  const hasLiked = story.likes?.includes(session.user.id);
+  const hasLiked = user && story.likes?.includes(user._id);
 
   const StoryCover = ({ coverImage, title }: { coverImage?: string; title: string }) => {
     if (coverImage && coverImage.trim() !== "") {
@@ -162,7 +162,7 @@ export default function StoryDetail() {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {chapters.map((chapter) => (
+          {chapters.map((chapter: any) => (
             <div
               key={chapter._id}
               className="group flex flex-col justify-between p-4 transition rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-md cursor-pointer"

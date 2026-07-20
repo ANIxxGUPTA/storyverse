@@ -5,7 +5,7 @@ import { apiFetch } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 
 export function ProfileSidebar({ profile, setProfile }: { profile: any, setProfile: (p: any) => void }) {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bioInput, setBioInput] = useState("");
   const [isEditingAvatar, setIsEditingAvatar] = useState(false);
@@ -38,6 +38,7 @@ export function ProfileSidebar({ profile, setProfile }: { profile: any, setProfi
         method: "PUT",
         body: JSON.stringify({ bio: bioInput })
       });
+      refreshUser();
     } catch (err: any) {
       // Rollback
       setProfile(originalProfile);
@@ -57,6 +58,7 @@ export function ProfileSidebar({ profile, setProfile }: { profile: any, setProfi
         method: "PUT",
         body: JSON.stringify({ image: avatarInput })
       });
+      refreshUser();
     } catch (err: any) {
       // Rollback
       setProfile(originalProfile);

@@ -44,9 +44,9 @@ export const createPost = async (req: Request, res: Response) => {
 
     const newPost = await Post.create({
       content,
-      image: image || "",
+      image: "",
       communityGenre: communityGenre || "",
-      author: user._id,
+      author: authUser._id,
       likes: [],
     });
 

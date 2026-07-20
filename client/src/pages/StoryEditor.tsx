@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Loader2, BookOpen } from "lucide-react";
 import { useFetch } from "../lib/hooks/useFetch";
@@ -6,7 +5,7 @@ import { ChapterList } from "../components/dashboard/ChapterList";
 
 export default function StoryEditor() {
   const { id } = useParams();
-  const { data, loading, error, refetch } = useFetch<any>(`/api/stories/${id}`);
+  const { data, loading, error } = useFetch<any>(`/api/stories/${id}`);
 
   if (loading) {
     return (

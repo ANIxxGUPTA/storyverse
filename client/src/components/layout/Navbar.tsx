@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../theme/ThemeProvider";
-import { BookOpen, LogOut, LayoutDashboard, Home, Search, Settings, BookMarked, User as UserIcon, Moon, Sun } from "lucide-react";
+import { BookOpen, LogOut, LayoutDashboard, Home, Search, Settings, User as UserIcon, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { useAuth } from "../../context/AuthContext";
+
 export function Navbar() {
-  // MOCK AUTH STATE for Phase 4
-  const status = "authenticated"; 
-  const session = { user: { name: "Mock User" } };
+  const { user, logout, authLoading } = useAuth();
+  const status = authLoading ? "loading" : user ? "authenticated" : "unauthenticated";
+  const session = user ? { user: { name: user.username } } : null;
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,8 +21,13 @@ export function Navbar() {
     setMounted(true);
   }, []);
 
-  const handleLogout = () => {
-    // navigate("/");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const isActive = (path: string) => pathname === path;
@@ -58,32 +65,15 @@ export function Navbar() {
           {status === "authenticated" && (
             <>
               <Link
-                to="/library"
+                to="/dashboard"
                 className={`flex items-center gap-1.5 transition ${
-                  isActive("/library") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
-                }`}
-              >
-                <BookMarked className="h-4 w-4" />
-                <span>Library</span>
-              </Link>
-              <Link
-                to="/workspace"
-                className={`flex items-center gap-1.5 transition ${
-                  isActive("/workspace") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                  isActive("/dashboard") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
                 }`}
               >
                 <LayoutDashboard className="h-4 w-4" />
-                <span>Workspace</span>
+                <span>Dashboard</span>
               </Link>
-              <Link
-                to="/dashboard"
-                className={`flex items-center gap-1.5 transition ${
-                  isActive("/dashboard") || pathname.startsWith("/profile") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
-                }`}
-              >
-                <UserIcon className="h-4 w-4" />
-                <span>Profile</span>
-              </Link>
+
             </>
           )}
         </nav>
@@ -102,15 +92,10 @@ export function Navbar() {
           ) : status === "authenticated" ? (
             <div className="flex items-center gap-3">
               <span className="hidden text-xs text-zinc-600 dark:text-zinc-400 sm:inline-block">
-                Hi, <strong className="text-zinc-800 dark:text-zinc-200">{session.user?.name}</strong>
+                Hi, <strong className="text-zinc-800 dark:text-zinc-200">{session?.user?.name}</strong>
               </span>
 
-              {/* Settings link */}
-              <Link to="/settings" title="Settings">
-                <button className="flex items-center justify-center p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition">
-                  <Settings className="h-4 w-4" />
-                </button>
-              </Link>
+
 
               <Button
                 variant="outline"

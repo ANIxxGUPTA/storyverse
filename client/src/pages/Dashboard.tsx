@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Plus, FileText, Loader2, MessageSquare, Heart, Eye, TrendingUp, CheckCircle2, Edit3 } from "lucide-react";
+import { BookOpen, Loader2, MessageSquare, Heart, Eye, CheckCircle2, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../context/AuthContext";
 import { useFetch } from "../lib/hooks/useFetch";
-import { apiFetch } from "../lib/api";
 import { ProfileSidebar } from "../components/dashboard/ProfileSidebar";
 import { CreationPanel } from "../components/dashboard/CreationPanel";
 import { FeedComposer } from "../components/dashboard/FeedComposer";
@@ -13,7 +12,6 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { data: storiesData, loading: storiesLoading, refetch: refetchStories } = useFetch<any>('/api/users/me/stories');
   const { data: feedData, loading: feedLoading, refetch: refetchFeed } = useFetch<any>('/api/users/me/feed');
-  const { data: profileData, refetch: refetchProfile } = useFetch<any>('/api/auth/me'); // Just to get full profile if needed, or we can use the user from context directly but it might not have bio updated if AuthContext caches it
   
   const stories = storiesData || [];
   const posts = feedData || [];

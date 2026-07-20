@@ -51,9 +51,13 @@ export const updateMe = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Bio cannot exceed 500 characters" });
     }
 
+    const updateData: any = {};
+    if (bio !== undefined) updateData.bio = bio;
+    if (image !== undefined) updateData.image = image;
+
     const updatedUser = await User.findByIdAndUpdate(
       authUser._id,
-      { bio: bio || "", image: image || "" },
+      updateData,
       { new: true }
     ).select("-password");
 

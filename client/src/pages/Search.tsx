@@ -269,7 +269,7 @@ export default function Search() {
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {stories.map((story, idx) => {
+              {stories.map((story: any, idx: number) => {
                 const likedCount = Array.isArray(story.likes) ? story.likes.length : 0;
                 return (
                   <Link
@@ -315,7 +315,7 @@ export default function Search() {
                         {/* Display tags */}
                         {story.tags && story.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2.5">
-                            {story.tags.slice(0, 3).map((tag, tIdx) => (
+                            {story.tags.slice(0, 3).map((tag: string, tIdx: number) => (
                               <span
                                 key={tIdx}
                                 className="rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[8px] px-1 py-0.2"
