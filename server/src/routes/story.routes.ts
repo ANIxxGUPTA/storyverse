@@ -8,7 +8,8 @@ import {
   createChapter,
   updateChapter,
   reorderChapters,
-  deleteChapter
+  deleteChapter,
+  likeStory
 } from "../controllers/story.controller";
 import { requireAuth } from "../middleware/requireAuth";
 import { requireOwner } from "../middleware/requireOwner";
@@ -22,6 +23,8 @@ router.post("/", requireAuth, createStory);
 
 router.put("/:id", requireAuth, requireOwner(Story, "id", "author"), updateStory);
 router.delete("/:id", requireAuth, requireOwner(Story, "id", "author"), deleteStory);
+
+router.post("/:id/like", requireAuth, likeStory);
 
 router.post("/:id/chapters", requireAuth, requireOwner(Story, "id", "author"), createChapter);
 

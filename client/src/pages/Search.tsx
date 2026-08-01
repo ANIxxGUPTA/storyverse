@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Search as SearchIcon, Filter, BookOpen, Heart, Eye, ArrowUpDown, Tag, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { useFetch } from "../lib/hooks/useFetch";
 
 const GENRES = ["All", "Fantasy", "Sci-Fi", "Romance", "Mystery", "Thriller", "Adventure", "Drama", "Comedy", "Fiction"];
@@ -87,7 +87,7 @@ export default function Search() {
   }
 
   const { data, loading } = useFetch<any>(url);
-  let stories = (isSemantic && debouncedQuery) ? (data?.results || []) : (data?.stories || []);
+  let stories = (isSemantic && debouncedQuery) ? (data?.results || []) : (Array.isArray(data) ? data : data?.stories || []);
 
   // Client-side sorting and tagging for now to keep parity with the UI filters
   if (selectedTag) {

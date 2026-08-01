@@ -72,3 +72,28 @@ export const deletePost = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Failed to delete post" });
   }
 };
+
+export const likePost = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = req.user as any;
+
+    const post = await Post.findById(id);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    const userIdStr = user._id.toString();
+    const hasLiked = post.likes.some((likeId: any) => likeId.toString() === userIdStr);
+
+    if (hasLiked) {
+      post.likes = post.likes.filter((likeId: any) => likeId.toString() !== userIdStr);
+    } else {
+      post.likes.push(user._id);
+    }
+
+    await post.save();
+    return res.json({ likes: post.likes });
+  } catch (error) {
+    console.error("likePost error:", error);
+    return res.status(500).json({ error: "Failed to toggle like on post" });
+  }
+};

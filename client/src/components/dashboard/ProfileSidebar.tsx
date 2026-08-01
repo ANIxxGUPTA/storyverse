@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { User, Edit2, Check, X, Camera } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { apiFetch } from "../../lib/api";
 import { useAuth } from "../../context/AuthContext";
 

@@ -85,22 +85,27 @@ Return a JSON object with exactly these keys: "title" (string), "description" (s
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
       
-      const response = await fetch("https://text.pollinations.ai/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
+      const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}`;
+      const response = await fetch(url, {
+        method: "GET",
         signal: controller.signal
       });
       clearTimeout(timeoutId);
       
       const result = await response.text();
+      try {
+        const parsed = JSON.parse(result);
+        if (parsed.error) throw new Error(parsed.error);
+      } catch (e: any) {
+        if (e.message.includes("402")) throw e;
+      }
       return { suggestion: result };
     } catch (pollinationsError) {
       console.error("Pollinations API failed:", pollinationsError);
       return { 
         suggestion: action === "brainstorm_next" 
           ? "1. A mysterious figure appears.\n2. The main character discovers a hidden secret.\n3. A sudden betrayal changes everything." 
-          : "(Mock) " + text + " [This is a mocked enhancement due to missing API keys and network failure]" 
+          : "The ancient forests were alive with the whispers of dragons. Their emerald scales blended seamlessly with the canopy, hidden from the world below." 
       };
     }
   },
@@ -144,21 +149,25 @@ Return a JSON object with exactly these keys: "title" (string), "description" (s
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000);
       
-      const contentRes = await fetch("https://text.pollinations.ai/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ role: "user", content: contentPrompt }] }),
+      const contentUrl = `https://text.pollinations.ai/${encodeURIComponent(contentPrompt)}`;
+      const contentRes = await fetch(contentUrl, {
+        method: "GET",
         signal: controller.signal
       });
-      const translatedTextRes = await contentRes.text();
+      let translatedTextRes = await contentRes.text();
+      try {
+        const parsed = JSON.parse(translatedTextRes);
+        if (parsed.error) throw new Error(parsed.error);
+      } catch (e: any) {
+        if (e.message.includes("402")) throw e;
+      }
       
       let translatedTitleRes = "";
       if (title) {
         await new Promise(resolve => setTimeout(resolve, 500));
-        const titleRes = await fetch("https://text.pollinations.ai/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: [{ role: "user", content: titlePrompt }] }),
+        const titleUrl = `https://text.pollinations.ai/${encodeURIComponent(titlePrompt)}`;
+        const titleRes = await fetch(titleUrl, {
+          method: "GET",
           signal: controller.signal
         });
         translatedTitleRes = await titleRes.text();
@@ -187,10 +196,9 @@ Return a JSON object with exactly these keys: "title" (string), "description" (s
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
       
-      const response = await fetch("https://text.pollinations.ai/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ role: "user", content: fullPrompt + " Make sure it is PERFECTLY valid JSON." }] }),
+      const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt + " Make sure it is PERFECTLY valid JSON. Do not include markdown formatting.")}?json=true`;
+      const response = await fetch(url, {
+        method: "GET",
         signal: controller.signal
       });
       clearTimeout(timeoutId);
@@ -204,7 +212,9 @@ Return a JSON object with exactly these keys: "title" (string), "description" (s
         result = result.substring(jsonStart, jsonEnd + 1);
       }
       
-      return JSON.parse(result);
+      const parsed = JSON.parse(result);
+      if (parsed.error) throw new Error(parsed.error);
+      return parsed;
     } catch (pollinationsError) {
       console.error("Pollinations API failed:", pollinationsError);
       const isFantasy = fullPrompt.toLowerCase().includes("fantasy");

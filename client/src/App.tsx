@@ -9,11 +9,17 @@ import Search from "./pages/Search";
 import Communities from "./pages/Communities";
 import CommunityDetail from "./pages/CommunityDetail";
 import StoryDetail from "./pages/StoryDetail";
+import Library from "./pages/Library";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import About from "./pages/About";
 import StoryEditor from "./pages/StoryEditor";
+import StoryCreate from "./pages/StoryCreate";
+import ChapterCreate from "./pages/ChapterCreate";
+import ChapterRead from "./pages/ChapterRead";
+import Feed from "./pages/Feed";
 
 const NotFound = () => <div className="p-10">404 Not Found</div>;
 
@@ -29,7 +35,13 @@ function App() {
               <Route path="/communities" element={<Communities />} />
               <Route path="/communities/:genre" element={<CommunityDetail />} />
               <Route path="/stories/:id" element={<StoryDetail />} />
+              <Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/stories/create" element={<ProtectedRoute><StoryCreate /></ProtectedRoute>} />
+              <Route path="/stories/:id/chapters/create" element={<ProtectedRoute><ChapterCreate /></ProtectedRoute>} />
+              <Route path="/stories/:id/chapters/:chapterId" element={<ChapterRead />} />
               <Route path="/stories/:id/edit" element={<ProtectedRoute><StoryEditor /></ProtectedRoute>} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />

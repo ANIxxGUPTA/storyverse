@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BookOpen, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { apiFetch } from "../../lib/api";
 
 const GENRES = ["Fiction", "Fantasy", "Sci-Fi", "Romance", "Mystery", "Thriller", "Horror"];

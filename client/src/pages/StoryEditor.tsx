@@ -1,11 +1,24 @@
-import { useParams, Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, BookOpen } from "lucide-react";
 import { useFetch } from "../lib/hooks/useFetch";
 import { ChapterList } from "../components/dashboard/ChapterList";
+import { useAuth } from "../context/AuthContext";
 
 export default function StoryEditor() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { data, loading, error } = useFetch<any>(`/api/stories/${id}`);
+
+  useEffect(() => {
+    if (data && data.story && user) {
+      const isAuthor = user._id === data.story.author?._id || user._id === data.story.authorId?.toString() || user._id === data.story.author;
+      if (!isAuthor) {
+        navigate(`/stories/${id}`);
+      }
+    }
+  }, [data, user, navigate, id]);
 
   if (loading) {
     return (

@@ -3,15 +3,21 @@ import mongoose from 'mongoose';
 import Story from '../models/Story';
 import Chapter from '../models/Chapter';
 import ChapterRevision from '../models/ChapterRevision';
+import { embed } from '../services/embeddings.service';
 
 export const getStories = async (req: Request, res: Response) => {
   try {
-    const { authorId, genre, tag, search, sort = 'recent', page, limit } = req.query;
+    const { authorId, genre, tag, search, sort = 'recent', page, limit, ids } = req.query;
     
     const pageNum = parseInt(page as string) || 1;
     const limitNum = parseInt(limit as string) || 0; // default 0 means no limit (matching legacy behavior)
     
     let query: any = {};
+    
+    if (ids) {
+      const idsArray = (ids as string).split(',');
+      query._id = { $in: idsArray };
+    }
     
     if (authorId) {
       query.author = authorId;
@@ -115,6 +121,14 @@ export const createStory = async (req: Request, res: Response) => {
       processedTags = tags.split(",").map(t => t.trim()).filter(Boolean);
     }
 
+    let embeddingVector: number[] = [];
+    try {
+      const contextText = `Title: ${title}. Genre: ${genre || "Fiction"}. Description: ${description}`;
+      embeddingVector = await embed(contextText);
+    } catch (err) {
+      console.warn("Failed to generate embedding during story creation", err);
+    }
+
     const newStory = await Story.create({
       title,
       coverImage: coverImage || "",
@@ -123,6 +137,7 @@ export const createStory = async (req: Request, res: Response) => {
       tags: processedTags,
       author: user._id,
       likes: [],
+      embedding: embeddingVector
     });
 
     return res.status(201).json(newStory);
@@ -211,6 +226,54 @@ export const updateChapter = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteChapter = async (req: Request, res: Response) => {
+  try {
+    const { id, chapterId } = req.params;
+    
+    const story = await Story.findById(id);
+    if (!story) return res.status(404).json({ error: "Story not found" });
+
+    const chapterIndex = story.chapters.findIndex((c: any) => c._id.toString() === chapterId);
+    if (chapterIndex === -1) return res.status(404).json({ error: "Chapter not found" });
+
+    story.chapters.splice(chapterIndex, 1);
+    
+    // Update word count and chapters count
+    story.totalWords = story.chapters.reduce((sum: number, c: any) => sum + (c.wordCount || 0), 0);
+    
+    await story.save();
+    return res.json(story);
+  } catch (error) {
+    console.error("deleteChapter error:", error);
+    return res.status(500).json({ error: "Failed to delete chapter" });
+  }
+};
+
+export const likeStory = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = req.user as any;
+
+    const story = await Story.findById(id);
+    if (!story) return res.status(404).json({ error: "Story not found" });
+
+    const userIdStr = user._id.toString();
+    const hasLiked = story.likes.some((likeId: any) => likeId.toString() === userIdStr);
+
+    if (hasLiked) {
+      story.likes = story.likes.filter((likeId: any) => likeId.toString() !== userIdStr);
+    } else {
+      story.likes.push(user._id);
+    }
+
+    await story.save();
+    return res.json({ likes: story.likes });
+  } catch (error) {
+    console.error("likeStory error:", error);
+    return res.status(500).json({ error: "Failed to toggle like on story" });
+  }
+};
+
 export const reorderChapters = async (req: Request, res: Response) => {
   try {
     // Expected body: { chapterIds: ["id1", "id2", "id3"] } - ordered array of chapter ObjectIds
@@ -238,13 +301,4 @@ export const reorderChapters = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteChapter = async (req: Request, res: Response) => {
-  try {
-    const { chapterId } = req.params;
-    await Chapter.findByIdAndDelete(chapterId);
-    return res.json({ success: true });
-  } catch (error) {
-    console.error("DELETE chapter error:", error);
-    return res.status(500).json({ error: "Failed to delete chapter" });
-  }
-};
+

@@ -16,7 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Loader2, Plus, Edit2, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { apiFetch } from "../../lib/api";
 
 function SortableChapterItem({ chapter, onEdit }: { chapter: any, onEdit: (c: any) => void }) {

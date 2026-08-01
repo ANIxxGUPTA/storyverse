@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, BookOpen, Send, MessageSquare, Heart, Share2, Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { useStories } from "../lib/hooks/useStories";
 import { useFeed } from "../lib/hooks/useFeed";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../lib/api";
 
 const GENRE_MAP: Record<string, { title: string; genreKey: string; desc: string; gradient?: string }> = {
   fantasy: {
@@ -56,28 +57,40 @@ export default function CommunityDetail() {
   };
 
   const { stories, loading: storiesLoading } = useStories({ genre });
-  const { feed: posts, loading: feedLoading } = useFeed(); // Note: feed might not support genre filtering on backend yet, but we'll wire it
+  const { feed: posts, loading: feedLoading, refetch } = useFeed({ genre: config.genreKey });
   
   const [postContent, setPostContent] = useState("");
   const [submittingPost, setSubmittingPost] = useState(false);
   const loading = storiesLoading || feedLoading;
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const handleCreatePost = (e: React.FormEvent) => {
+  const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!postContent.trim()) return;
 
     setSubmittingPost(true);
-    setTimeout(() => {
-
-      // Removed setPosts since it's mock state; in real app this would call an API
+    try {
+      await apiFetch("/api/feed", {
+        method: "POST",
+        body: JSON.stringify({ content: postContent, communityGenre: config.genreKey }),
+      });
       setPostContent("");
+      refetch();
+    } catch (err) {
+      console.error(err);
+    } finally {
       setSubmittingPost(false);
-    }, 500);
+    }
   };
 
-  const handleLikePost = () => {
-    // Removed setPosts since it's mock state; in real app this would call an API
+  const handleLikePost = async (postId: string) => {
+    if (!user) return;
+    try {
+      await apiFetch(`/api/feed/${postId}/like`, { method: "POST" });
+      refetch();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleSharePost = (postId: string) => {
@@ -235,7 +248,7 @@ export default function CommunityDetail() {
 
                       <div className="flex items-center gap-4 text-[10px] text-zinc-500 pt-2 border-t border-zinc-200 dark:border-zinc-900/40">
                         <button
-                          onClick={() => handleLikePost()}
+                          onClick={() => handleLikePost(post._id)}
                           className={`flex items-center gap-1 transition ${hasLiked ? "text-red-500" : "hover:text-red-400"}`}
                         >
                           <Heart className={`h-3.5 w-3.5 ${hasLiked ? "fill-red-500" : ""}`} />

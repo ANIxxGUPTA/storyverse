@@ -13,6 +13,8 @@ import storyRoutes from './routes/story.routes';
 import feedRoutes from './routes/feed.routes';
 import userRoutes from './routes/user.routes';
 import searchRoutes from './routes/search.routes';
+import aiRoutes from './routes/ai.routes';
+import collectionRoutes from './routes/collection.routes';
 
 dotenv.config();
 
@@ -48,12 +50,15 @@ app.use('/api/stories', storyRoutes);
 app.use('/api/feed', feedRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/collections', collectionRoutes);
 
 const startServer = async () => {
   await connectDB();
   if (process.env.NODE_ENV !== 'production' || process.env.VERCEL !== '1') {
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
+      console.log(`GEMINI_API_KEY present: ${!!process.env.GEMINI_API_KEY}`);
     });
   }
 };

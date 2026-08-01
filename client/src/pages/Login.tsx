@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -20,7 +20,7 @@ export default function Login() {
     try {
       if (!email || !password) throw new Error("Missing fields");
       await login({ email, password });
-      navigate("/dashboard", { replace: true });
+      navigate("/", { replace: true });
     } catch (err: any) {
       setError(err.message || "Invalid credentials");
     } finally {

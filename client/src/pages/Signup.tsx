@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { useAuth } from "../context/AuthContext";
+import { AiFeaturesBanner } from "../components/AiFeaturesBanner";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function Signup() {
     try {
       if (!username || !email || !password) throw new Error("Missing fields");
       await signup({ username, email, password });
-      navigate("/dashboard", { replace: true });
+      navigate("/", { replace: true });
     } catch (err: any) {
       setError(err.message || "Failed to create account");
     } finally {
@@ -117,6 +118,10 @@ export default function Signup() {
             Login here
           </Link>
         </p>
+      </div>
+
+      <div className="hidden lg:block w-full max-w-2xl ml-12">
+        <AiFeaturesBanner />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../../theme/ThemeProvider";
 import { BookOpen, LogOut, LayoutDashboard, Home, Search, Settings, User as UserIcon, Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -65,15 +65,32 @@ export function Navbar() {
           {status === "authenticated" && (
             <>
               <Link
+                to="/library"
+                className={`flex items-center gap-1.5 transition ${
+                  isActive("/library") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                }`}
+              >
+                <BookOpen className="h-4 w-4" />
+                <span>Library</span>
+              </Link>
+              <Link
                 to="/dashboard"
                 className={`flex items-center gap-1.5 transition ${
                   isActive("/dashboard") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
                 }`}
               >
                 <LayoutDashboard className="h-4 w-4" />
-                <span>Dashboard</span>
+                <span>Workspace</span>
               </Link>
-
+              <Link
+                to="/profile"
+                className={`flex items-center gap-1.5 transition ${
+                  isActive("/profile") ? "font-semibold text-blue-600 dark:text-blue-400" : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
+                }`}
+              >
+                <UserIcon className="h-4 w-4" />
+                <span>Profile</span>
+              </Link>
             </>
           )}
         </nav>
@@ -95,8 +112,9 @@ export function Navbar() {
                 Hi, <strong className="text-zinc-800 dark:text-zinc-200">{session?.user?.name}</strong>
               </span>
 
-
-
+              <Link to="/profile" className="flex items-center justify-center p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition">
+                <Settings className="h-4 w-4" />
+              </Link>
               <Button
                 variant="outline"
                 size="sm"

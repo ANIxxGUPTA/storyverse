@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
-import { BookOpen, PenTool, Book, Heart, Eye, FolderHeart } from "lucide-react";
+import { BookOpen, PenTool, Book, Heart, Eye, FolderHeart, Sparkles } from "lucide-react";
 import { useStories } from "../lib/hooks/useStories";
+import { useAuth } from "../context/AuthContext";
+import { AiFeaturesBanner } from "../components/AiFeaturesBanner";
 
 
 
@@ -36,6 +38,7 @@ const StoryCover = ({ coverImage, title, index }: { coverImage?: string; title: 
 
 export default function Home() {
   const { stories } = useStories({ limit: 9 });
+  const { user } = useAuth();
 
   return (
     <div className="flex min-h-screen flex-col bg-transparent">
@@ -67,7 +70,18 @@ export default function Home() {
                 </button>
               </Link>
             </div>
+            
+            {!user && (
+              <div className="mt-10 inline-flex items-center justify-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-5 py-2.5 text-sm font-medium text-indigo-700 dark:text-indigo-300 backdrop-blur-md shadow-sm transition-all hover:scale-105">
+                <Sparkles className="h-4 w-4" />
+                <span>Log in to unlock AI Story Generation, AI Co-Writer, and AI Cover Art!</span>
+              </div>
+            )}
           </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6">
+          <AiFeaturesBanner />
         </section>
 
         {/* Communities Showcase Quick Jumps */}

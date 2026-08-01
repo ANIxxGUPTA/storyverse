@@ -12,9 +12,10 @@ export function useStories(params?: { genre?: string; limit?: number }) {
 
   const { data, error, loading, refetch } = useFetch<any>(url);
 
-  // Return the `stories` array from the JSON response
+  const storiesData = Array.isArray(data) ? data : data?.stories || [];
+
   return {
-    stories: data?.stories || [],
+    stories: storiesData,
     pagination: data?.pagination,
     error,
     loading,

@@ -19,8 +19,13 @@ async function generateEmbeddings() {
 
 
 
-    const stories = await Story.find({});
-    console.log(`Found ${stories.length} stories. Generating embeddings...`);
+    const stories = await Story.find({
+      $or: [
+        { embedding: { $exists: false } },
+        { embedding: { $size: 0 } }
+      ]
+    });
+    console.log(`Found ${stories.length} stories missing embeddings. Generating...`);
 
     let processed = 0;
     for (const story of stories) {

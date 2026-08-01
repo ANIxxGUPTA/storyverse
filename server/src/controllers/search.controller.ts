@@ -12,7 +12,24 @@ export const searchStories = async (req: Request, res: Response): Promise<void> 
     }
 
     // 1. Generate the embedding vector for the semantic query
-    const queryVector = await embed(query);
+    let queryVector;
+    try {
+      queryVector = await embed(query);
+    } catch (e) {
+      console.warn("Semantic search failed (possibly missing Gemini API Key). Falling back to Regex search.");
+      // Fallback: standard regex search
+      const regexStories = await Story.find({
+        status: "ongoing",
+        title: { $regex: query, $options: "i" }
+      }).populate("author", "username profilePicture").lean();
+      
+      res.json({
+        success: true,
+        query,
+        results: regexStories
+      });
+      return;
+    }
 
     // 2. Fetch all stories that have pre-computed embeddings
     const allStories = await Story.find({
@@ -43,7 +60,7 @@ export const searchStories = async (req: Request, res: Response): Promise<void> 
       results: recommendations
     });
   } catch (error) {
-    console.error("Vector Search Error:", error);
-    res.status(500).json({ error: "Failed to perform semantic search" });
+    console.error("Search Error:", error);
+    res.status(500).json({ error: "Failed to perform search" });
   }
 };
