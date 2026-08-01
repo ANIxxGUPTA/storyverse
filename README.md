@@ -94,3 +94,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 The application is configured to deploy directly to Vercel. 
 Simply import your GitHub repository, add the production environment variables (`MONGODB_URI`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`), and click deploy!
+ 
