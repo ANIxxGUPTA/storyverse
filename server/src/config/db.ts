@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 
+let cached: typeof mongoose | null = null;
+
 export const connectDB = async () => {
+  if (cached) {
+    return cached;
+  }
+
   try {
     const uri = process.env.MONGODB_URI;
     if (!uri) {
@@ -9,13 +15,14 @@ export const connectDB = async () => {
     
     // Serverless caching check: reuse existing connection if already established
     if (mongoose.connection.readyState >= 1) {
-      return;
+      return mongoose;
     }
 
-    await mongoose.connect(uri);
+    cached = await mongoose.connect(uri);
     console.log('MongoDB Connected');
+    return cached;
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    process.exit(1);
+    throw error; // Don't process.exit in serverless, let the function fail cleanly
   }
 };

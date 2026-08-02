@@ -6,6 +6,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passport from './config/passport';
 import { connectDB } from './config/db';
+import mongoose from 'mongoose';
 
 import healthRoute from './routes/health';
 import authRoutes from './routes/auth.routes';
@@ -35,7 +36,9 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'secret',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  store: MongoStore.create({ 
+    clientPromise: connectDB().then(() => mongoose.connection.getClient())
+  }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     httpOnly: true,
