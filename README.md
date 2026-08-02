@@ -1,51 +1,57 @@
 # StoryVerse
+[Live Demo](https://storyverse-ruddy.vercel.app/) | [Repository](https://github.com/ANIxxGUPTA/storyverse)
 
-**StoryVerse** is an AI-powered, community-driven storytelling platform. Originally built as a monolithic Next.js application, it has been completely re-architected into a decoupled React + Express stack and deployed entirely on Vercel Serverless. StoryVerse differentiates itself by leveraging Google's Gemini API for AI-assisted story generation, chapter expansion, and semantic "Find by Vibe" vector search.
+StoryVerse is an interactive storytelling platform where authors build full-length stories with a drag-and-drop editor, generate AI-assisted chapters, and readers discover content through semantic vector search, all powered by a deeply integrated Node/Express backend running entirely as a single serverless function on Vercel.
 
-Live Demo: [https://storyverse-ruddy.vercel.app/](https://storyverse-ruddy.vercel.app/) | Repository: [https://github.com/ANIxxGUPTA/storyverse](https://github.com/ANIxxGUPTA/storyverse)
+## 🛠 Under the Hood
+- **Single-Function Serverless API:** The entire Express 5 backend runs on Vercel as a single unified serverless function via rewrites, eliminating the need for a separate backend host.
+- **True Semantic Search:** The "Find by Vibe" feature isn't doing keyword matching. It uses Google's `gemini-embedding-001` to generate real vector embeddings stored and searched directly in MongoDB Atlas.
+- **Cold-Start Optimized Session Storage:** Passport.js sessions are backed by MongoDB, but explicitly reuse the exact same cached `MongoClient` connection established by the primary Mongoose instance to aggressively cut serverless cold-start latency.
 
-## 🚀 Key Features
-- **Semantic "Find by Vibe" Search:** Find stories based on mood and narrative themes using Gemini embeddings.
-- **Discover & Genre Communities:** Browse communities by genre (Fiction, Fantasy, Sci-Fi, Romance, etc.) and explore curated feeds.
-- **AI-Assisted Story Creation:** Generate story outlines, draft your chapters with an AI co-writer, and automatically create captivating cover art.
-- **Interactive Story Editor:** Build stories visually using a drag-and-drop chapter management system.
-- **Library & Collections:** Save stories, track your reading progress, and build your personal collection.
-- **Rich Markdown Reading:** Beautifully rendered chapter content with full markdown support.
-- **Dashboard & Profiles:** Track your authored stories, likes, and views.
+## 🚀 Features
 
-## 🛠 Tech Stack
+**Discovery & Reading**
+- **Semantic "Find by Vibe":** Search for stories by mood, theme, or narrative concept using real Gemini vector embeddings.
+- **Curated Genres:** Browse categorized feeds (Fiction, Fantasy, Sci-Fi, Romance) built from live database queries.
+- **Rich Markdown Reader:** Clean, readable chapter rendering powered by `react-markdown`, `remark-gfm`, and `rehype-raw`.
 
-### Frontend (`client/`)
-- **Core:** React 19, Vite, TypeScript
-- **Routing:** React Router v7 (`react-router-dom`)
-- **Styling:** Tailwind CSS v4 (via `@tailwindcss/postcss`, no config file needed)
-- **UI Components:** Radix UI + shadcn-style implementation (`class-variance-authority`, `tailwind-merge`, `clsx`), Lucide React (icons)
-- **Drag-and-Drop:** `@dnd-kit/core` (with sortable & utilities) for intuitive chapter reordering, actively used in `StoryDetail.tsx` and `ChapterList.tsx`
-- **Markdown:** `react-markdown` + `remark-gfm` + `rehype-raw` for chapter rendering and editing, actively used in `ChapterRead.tsx` and `markdown-editor.tsx`
+**Writing & AI Tools**
+- **Interactive Story Builder:** Organize, order, and manage chapters visually using `@dnd-kit/core` drag-and-drop mechanics.
+- **AI Co-Writer:** Generate story outlines, draft chapters, and synthesize dynamic cover art via integrated Gemini API endpoints.
 
-### Backend (`server/`)
-- **Core:** Node.js, Express 5, TypeScript
-- **Authentication:** Passport.js (`passport-local` strategy) with `bcryptjs` for password hashing
-- **Session Management:** `express-session` backed by `connect-mongo` storing sessions in MongoDB
-- **Database ODM:** Mongoose with connection caching in `db.ts` to survive serverless cold starts
-- **Session Optimization:** The session store explicitly reuses the same Mongoose connection's MongoClient (via `clientPromise: connectDB().then(() => mongoose.connection.getClient())`) to dramatically improve serverless cold start times.
+**Social & Account**
+- **Library & Collections:** Save stories, track reading progress, and build a personal collection.
+- **Dashboard:** Monitor authored stories, track likes, and check total views.
+- **Session Authentication:** Fully secure local strategy authentication via Passport.js and `bcryptjs`.
 
-### AI & Embeddings
-- **Google Gemini API (`@google/genai`):** Used exclusively in `gemini.service.ts` for text generation/translation, and `embeddings.service.ts` (model: `gemini-embedding-001`) for semantic search vectors. No other local ML library is used.
+## ⚙️ Tech Stack
 
-### Database
-- **MongoDB Atlas**
+| Domain | Technologies |
+|---|---|
+| **Frontend** | React 19, Vite, TypeScript |
+| **Routing & UI** | React Router v7, Tailwind CSS v4, Radix UI / shadcn, Lucide React |
+| **Backend** | Node.js, Express 5, TypeScript |
+| **Auth & Sessions** | Passport.js (Local), `bcryptjs`, `express-session`, `connect-mongo` |
+| **Data & Search** | MongoDB Atlas, Mongoose |
+| **AI Integration**| Google Gemini API (`@google/genai`, `gemini-embedding-001`) |
+| **Deployment** | Vercel (Serverless Functions), NPM Workspaces Monorepo |
 
-## 🏗 Architecture & Deployment
-StoryVerse is deployed as a **single unified Vercel project**. 
-The repository is structured as an npm workspaces monorepo (the root `package.json` links the `client/` and `server/` workspaces). 
+## 🏗 Architecture Request Flow
 
-There is no separate backend host (no Render, no NextAuth). The root `vercel.json` orchestrates the deployment:
-1. It builds the `client/` workspace as a static output.
-2. It rewrites all `/api/*` routes to `api/index.ts`.
-3. `api/index.ts` imports and wraps the entire Express application into one unified serverless function.
+The repository is structured as an npm workspaces monorepo. The root `vercel.json` configures the static frontend build and routes all backend requests into a single serverless execution environment.
 
-*(Migration History: This decoupled architecture fully replaced the legacy Next.js monolith. The old monolithic code is permanently archived under the `legacy-nextjs-final` git tag only. See `docs/MIGRATION.md` for early phase restructuring details.)*
+```text
+Browser 
+  │
+  ├─ GET /           → Vercel Edge Cache → Static Frontend (client/)
+  │
+  └─ GET /api/search → Vercel Serverless (api/index.ts)
+                         └─ Express 5 Application 
+                              ├─ Passport Auth Middleware
+                              └─ Controllers & Services
+                                   ├─ Gemini API (Vector Embeddings)
+                                   └─ MongoDB Atlas (Vector Search & Data)
+```
 
 ## 💻 Getting Started
 
