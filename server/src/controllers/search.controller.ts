@@ -49,8 +49,14 @@ export const searchStories = async (req: Request, res: Response): Promise<void> 
     scoredStories.sort((a, b) => b.similarityScore - a.similarityScore);
 
     // Filter out stories that don't match the vibe well enough
-    const SIMILARITY_THRESHOLD = 0.65;
-    const relevantStories = scoredStories.filter((s: any) => s.similarityScore >= SIMILARITY_THRESHOLD);
+    // We use a dynamic relative threshold based on the best match.
+    let relevantStories = scoredStories;
+    if (scoredStories.length > 0) {
+      const maxScore = scoredStories[0].similarityScore;
+      // Only keep stories that are relatively close to the best match (or at least 0.50)
+      const dynamicThreshold = Math.max(0.50, maxScore - 0.06);
+      relevantStories = scoredStories.filter((s: any) => s.similarityScore >= dynamicThreshold);
+    }
 
     // 5. Take top matches and remove the raw embeddings from the response payload
     const recommendations = relevantStories.slice(0, 10).map((story: any) => {
