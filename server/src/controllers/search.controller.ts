@@ -48,8 +48,12 @@ export const searchStories = async (req: Request, res: Response): Promise<void> 
     // 4. Sort by highest similarity score (closest semantic match)
     scoredStories.sort((a, b) => b.similarityScore - a.similarityScore);
 
+    // Filter out stories that don't match the vibe well enough
+    const SIMILARITY_THRESHOLD = 0.65;
+    const relevantStories = scoredStories.filter((s: any) => s.similarityScore >= SIMILARITY_THRESHOLD);
+
     // 5. Take top matches and remove the raw embeddings from the response payload
-    const recommendations = scoredStories.slice(0, 10).map(story => {
+    const recommendations = relevantStories.slice(0, 10).map((story: any) => {
       const { embedding, similarityScore, ...safeStory } = story;
       return safeStory;
     });
