@@ -58,11 +58,14 @@ export default function Home() {
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <Link to="/#discover">
-                <button className="h-11 rounded-lg bg-blue-600 px-8 font-semibold text-white hover:bg-blue-700 transition duration-200 shadow-md">
-                  Start Reading
-                </button>
-              </Link>
+              <button 
+                onClick={() => {
+                  document.getElementById('discover')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="h-11 rounded-lg bg-blue-600 px-8 font-semibold text-white hover:bg-blue-700 transition duration-200 shadow-md"
+              >
+                Start Reading
+              </button>
 
               <Link to="/dashboard">
                 <button className="h-11 rounded-lg border border-blue-600/30 bg-blue-600/10 px-8 font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-600/20 transition duration-200 backdrop-blur-sm">
