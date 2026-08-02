@@ -1,5 +1,8 @@
 {
-  "dependencies": {
-    "puppeteer": "^25.3.0"
-  }
+  "name": "storyverse",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ]
 }
