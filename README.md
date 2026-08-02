@@ -1,97 +1,77 @@
-# StoryVerse 📚✍️
-
 # StoryVerse
 
-StoryVerse is a full-stack platform for writers and readers, featuring a highly interactive Creator Hub, an immersive Story Reader, and AI-powered semantic search.
+**StoryVerse** is an AI-powered, community-driven storytelling platform. Originally built as a monolithic Next.js application, it has been completely re-architected into a decoupled React + Express stack and deployed entirely on Vercel Serverless. StoryVerse differentiates itself by leveraging Google's Gemini API for AI-assisted story generation, chapter expansion, and semantic "Find by Vibe" vector search.
 
-## Final Architecture
-
-This project was successfully migrated from a legacy Next.js codebase to a modern, decoupled React SPA + Express REST API architecture.
-
-### Tech Stack
-- **Frontend:** React 19, Vite, TypeScript, Tailwind CSS, shadcn/ui, Radix UI, React Router v6, `@dnd-kit/core` (drag-and-drop)
-- **Backend:** Node.js, Express, TypeScript, Passport.js (Cookie-based Sessions)
-- **Database:** MongoDB (Mongoose)
-- **AI Integration:** `@xenova/transformers` (local embeddings), Google Gemini API (generative content)
-
-## Deployment
-
-- **Frontend (Client):** Deployed on Vercel (`client/` root).
-- **Backend (Server):** Deployed on Render (`server/` root).
-- **Database:** Hosted on MongoDB Atlas.
-
-> **Note:** The legacy Next.js codebase has been safely archived via the `legacy-nextjs-final` Git tag.
-
-Welcome to **StoryVerse**, a modern full-stack web application designed for self-publishing stories, writing chapters, reading user-submitted tales, and sharing text updates on a community feed. 
-
-It is designed with a sleek dark-mode-first aesthetic (similar to a blend between Wattpad and Instagram, but simplified and streamlined).
-
----
-
-## 🔗 Live Site & Repository
-
-* **Live Deployment**: [storyverse-ruddy.vercel.app](https://storyverse-ruddy.vercel.app/)
-* **GitHub Repository**: [ANIxxGUPTA/storyverse](https://github.com/ANIxxGUPTA/storyverse)
-
----
+Live Demo: [https://storyverse-ruddy.vercel.app/](https://storyverse-ruddy.vercel.app/)
 
 ## 🚀 Key Features
+- **Semantic "Find by Vibe" Search:** Find stories based on mood and narrative themes using Gemini embeddings.
+- **Discover & Genre Communities:** Browse communities by genre (Fiction, Fantasy, Sci-Fi, Romance, etc.) and explore curated feeds.
+- **AI-Assisted Story Creation:** Generate story outlines, chapter drafts, and cover images directly through the `/api/ai` endpoints.
+- **Interactive Story Editor:** Build stories visually using a drag-and-drop chapter management system.
+- **Library & Collections:** Save stories, track your reading progress, and build your personal collection.
+- **Rich Markdown Reading:** Beautifully rendered chapter content with full markdown support.
+- **Dashboard & Profiles:** Track your authored stories, likes, and views.
 
-* **Discover Stories**: A single, clean, chronological gallery grid of published stories from users.
-* **Unified Workspace (Dashboard)**: A single view containing:
-  * **User Profile Sidebar**: Displays username, avatar, and custom bio (with full client-side edit capabilities).
-  * **Creation Panel**: Quick-access shortcuts to compose new stories or publish feed posts.
-  * **Tabs Workspace**: Convenient tabs to toggle between viewing "My Stories" and "My Feed Posts".
-* **Interactive Story Reader**: Elegant, Wattpad-inspired reading interface designed for focus and serial chapter progression.
-* **Text-Only Social Feed**: A simplified, distraction-free social feed where creators can publish microblog updates, release announcements, or thoughts.
-* **Secure Auth Integration**: Full credential authentication (Sign Up / Login / Session persistence) utilizing **NextAuth.js**.
+## 🛠 Tech Stack
 
----
+### Frontend (`client/`)
+- **Core:** React 19, Vite, TypeScript
+- **Routing:** React Router v7 (`react-router-dom`)
+- **Styling:** Tailwind CSS v4 (via `@tailwindcss/postcss`, no config file needed)
+- **UI Components:** Radix UI + shadcn-style implementation (`class-variance-authority`, `tailwind-merge`, `clsx`), Lucide React (icons)
+- **Drag-and-Drop:** `@dnd-kit/core` (with sortable & utilities) for intuitive chapter reordering, actively used in `StoryDetail.tsx` and `ChapterList.tsx`
+- **Markdown:** `react-markdown` + `remark-gfm` + `rehype-raw` for chapter rendering and editing, actively used in `ChapterRead.tsx` and `markdown-editor.tsx`
 
-## 🛠️ Tech Stack
+### Backend (`server/`)
+- **Core:** Node.js, Express 5, TypeScript
+- **Authentication:** Passport.js (`passport-local` strategy) with `bcryptjs` for password hashing
+- **Session Management:** `express-session` backed by `connect-mongo` storing sessions in MongoDB
+- **Database ODM:** Mongoose with connection caching in `db.ts` to survive serverless cold starts
+- **Session Optimization:** The session store explicitly reuses the same Mongoose connection's MongoClient (via `clientPromise: connectDB().then(() => mongoose.connection.getClient())`) to dramatically improve serverless cold start times.
 
-* **Frontend Framework**: [Next.js (App Router)](https://nextjs.org/)
-* **Language**: [TypeScript](https://www.typescriptlang.org/)
-* **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-* **Database**: [MongoDB Atlas](https://www.mongodb.com/atlas) (with [Mongoose](https://mongoosejs.com/) schemas)
-* **Authentication**: [NextAuth.js](https://next-auth.js.org/)
-* **Icons**: [Lucide React](https://lucide.dev/)
+### AI & Embeddings
+- **Google Gemini API (`@google/genai`):** Used exclusively in `gemini.service.ts` for text generation/translation, and `embeddings.service.ts` (model: `gemini-embedding-001`) for semantic search vectors. No other local ML library is used.
 
----
+### Database
+- **MongoDB Atlas**
 
-## 📦 Getting Started & Installation
+## 🏗 Architecture & Deployment
+StoryVerse is deployed as a **single unified Vercel project**. 
+The repository is structured as an npm workspaces monorepo (the root `package.json` links the `client/` and `server/` workspaces). 
 
-To run this project locally, follow these steps:
+There is no separate backend host (no Render, no NextAuth). The root `vercel.json` orchestrates the deployment:
+1. It builds the `client/` workspace as a static output.
+2. It rewrites all `/api/*` routes to `api/index.ts`.
+3. `api/index.ts` imports and wraps the entire Express application into one unified serverless function.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/ANIxxGUPTA/storyverse.git
-cd storyverse
-```
+*(Migration History: This decoupled architecture fully replaced the legacy Next.js monolith. The old monolithic code is permanently archived under the `legacy-nextjs-final` git tag only. See `docs/MIGRATION.md` for early phase restructuring details.)*
 
-### 2. Install dependencies
-```bash
-npm install
-```
+## 💻 Getting Started
 
-### 3. Configure local environment variables
-Create a `.env.local` file in the root of the project and define the following variables:
+### Prerequisites
+Make sure you have Node.js installed. Ensure your MongoDB Atlas cluster is running and you have your Google Gemini API key.
+
+### Environment Variables
+The application requires the following variables in a `.env` file or in your deployment settings:
 ```env
 MONGODB_URI=your_mongodb_connection_string
-NEXTAUTH_SECRET=your_nextauth_jwt_secret
-NEXTAUTH_URL=http://localhost:3000
+SESSION_SECRET=your_session_secret
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-### 4. Run the development server
+### Local Development
+Because this is an npm workspaces monorepo, you can install everything directly from the root:
 ```bash
+# 1. Install dependencies for both client and server workspaces
+npm install
+
+# 2. Start the backend server (runs on http://localhost:4000)
+cd server
+npm run dev
+
+# 3. Start the frontend client (proxy targets localhost:4000 per vite.config.ts)
+# In a new terminal:
+cd client
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the application!
-
----
-
-## 🐳 Deploying to Vercel
-
-The application is configured to deploy directly to Vercel. 
-Simply import your GitHub repository, add the production environment variables (`MONGODB_URI`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`), and click deploy!
- 
