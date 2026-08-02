@@ -2,12 +2,12 @@
 
 **StoryVerse** is an AI-powered, community-driven storytelling platform. Originally built as a monolithic Next.js application, it has been completely re-architected into a decoupled React + Express stack and deployed entirely on Vercel Serverless. StoryVerse differentiates itself by leveraging Google's Gemini API for AI-assisted story generation, chapter expansion, and semantic "Find by Vibe" vector search.
 
-Live Demo: [https://storyverse-ruddy.vercel.app/](https://storyverse-ruddy.vercel.app/)
+Live Demo: [https://storyverse-ruddy.vercel.app/](https://storyverse-ruddy.vercel.app/) | Repository: [https://github.com/ANIxxGUPTA/storyverse](https://github.com/ANIxxGUPTA/storyverse)
 
 ## 🚀 Key Features
 - **Semantic "Find by Vibe" Search:** Find stories based on mood and narrative themes using Gemini embeddings.
 - **Discover & Genre Communities:** Browse communities by genre (Fiction, Fantasy, Sci-Fi, Romance, etc.) and explore curated feeds.
-- **AI-Assisted Story Creation:** Generate story outlines, chapter drafts, and cover images directly through the `/api/ai` endpoints.
+- **AI-Assisted Story Creation:** Generate story outlines, draft your chapters with an AI co-writer, and automatically create captivating cover art.
 - **Interactive Story Editor:** Build stories visually using a drag-and-drop chapter management system.
 - **Library & Collections:** Save stories, track your reading progress, and build your personal collection.
 - **Rich Markdown Reading:** Beautifully rendered chapter content with full markdown support.
@@ -75,3 +75,5 @@ npm run dev
 cd client
 npm run dev
 ```
+
+The frontend client will start on `http://localhost:5173`. Open this URL in your browser to view and interact with the running app.
